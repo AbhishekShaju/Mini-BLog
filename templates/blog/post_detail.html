@@ -1,25 +1,110 @@
 {% extends "blog/base.html" %}
+
 {% block content %}
-    <article class="media content-section">
-        <div class="media-body">
-            <div class="article-metadata">
-                <a class="mr-2" href="{% url 'user_posts' object.author.username %}">{{ object.author }}</a>
-                <small class="text-muted">{{ object.published_at|date:"F d, Y" }}</small>
-                {% if object.author == user %}
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <article class="content-section">
+                <div class="article-metadata d-flex align-items-center">
+                    <img class="rounded-circle article-img" src="{{ post.author.profile.image.url }}" style="width: 40px; height: 40px; object-fit: cover;">
                     <div>
-                        <a class="btn btn-secondary btn-sm mt-1 mb-1" href="{% url 'post_update' object.pk %}">Update</a>
-                        <a class="btn btn-danger btn-sm mt-1 mb-1" href="{% url 'post_delete' object.pk %}">Delete</a>
+                        <a class="author-link" href="{% url 'user_posts' post.author.username %}">{{ post.author }}</a>
+                        <br>
+                        <small class="text-muted">
+                            Posted on {{ post.date_posted|date:"F d, Y" }}
+                            {% if post.expires_at %}
+                                <span class="expiry-date">• Expires on {{ post.expires_at|date:"F d, Y" }}</span>
+                            {% endif %}
+                        </small>
+                    </div>
+                </div>
+                <h1 class="article-title">{{ post.title }}</h1>
+                {% if post.image %}
+                    <div class="article-image mb-4">
+                        <img src="{{ post.image.url }}" alt="{{ post.title }}" class="img-fluid rounded">
                     </div>
                 {% endif %}
-            </div>
-            <h2 class="article-title">{{ object.title }}</h2>
-            <p class="article-content">{{ object.content }}</p>
-            {% if object.expires_at %}
-                <small class="text-muted">Expires: {{ object.expires_at|date:"F d, Y" }}</small>
-            {% endif %}
-            {% if object.is_draft %}
-                <small class="text-muted">Status: Draft</small>
-            {% endif %}
+                <p class="article-content">{{ post.content }}</p>
+                {% if post.author == user %}
+                    <div class="mt-4">
+                        <a class="btn btn-outline-secondary" href="{% url 'post_update' post.pk %}">
+                            <i class="fas fa-edit me-2"></i>Update
+                        </a>
+                        <a class="btn btn-outline-danger" href="{% url 'post_delete' post.pk %}">
+                            <i class="fas fa-trash me-2"></i>Delete
+                        </a>
+                    </div>
+                {% endif %}
+            </article>
         </div>
-    </article>
+    </div>
+</div>
+
+<style>
+    .content-section {
+        background: white;
+        padding: 2rem;
+        border-radius: 15px;
+        box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+    }
+
+    .article-img {
+        margin-right: 15px;
+    }
+
+    .article-metadata {
+        padding-bottom: 1rem;
+        margin-bottom: 1rem;
+        border-bottom: 1px solid #eee;
+    }
+
+    .author-link {
+        color: var(--secondary-color);
+        text-decoration: none;
+        font-weight: 600;
+        transition: color 0.3s ease;
+    }
+
+    .author-link:hover {
+        color: var(--primary-color);
+        text-decoration: none;
+    }
+
+    .article-title {
+        color: var(--primary-color);
+        font-size: 2rem;
+        font-weight: 600;
+        margin-bottom: 1.5rem;
+    }
+
+    .article-content {
+        color: #666;
+        line-height: 1.8;
+        font-size: 1.1rem;
+    }
+
+    .article-image img {
+        width: 100%;
+        max-height: 500px;
+        object-fit: cover;
+        box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    }
+
+    .btn {
+        transition: all 0.3s ease;
+    }
+
+    .btn:hover {
+        transform: translateY(-2px);
+    }
+
+    .btn-outline-secondary {
+        margin-right: 0.5rem;
+    }
+
+    .expiry-date {
+        color: #dc3545;
+        font-weight: 500;
+    }
+</style>
 {% endblock content %} 

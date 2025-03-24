@@ -1,49 +1,224 @@
 {% extends "blog/base.html" %}
+
 {% block content %}
-    {% for post in posts %}
-        <article class="media content-section">
-            <div class="media-body">
-                <div class="article-metadata">
-                    <a class="mr-2" href="{% url 'user_posts' post.author.username %}">{{ post.author }}</a>
-                    <small class="text-muted">{{ post.published_at|date:"F d, Y" }}</small>
-                </div>
-                <h2><a class="article-title" href="{% url 'post_detail' post.pk %}">{{ post.title }}</a></h2>
-                <p class="article-content">{{ post.content|truncatewords:50 }}</p>
-                {% if post.expires_at %}
-                    <small class="text-muted">Expires: {{ post.expires_at|date:"F d, Y" }}</small>
-                {% endif %}
+<div class="container py-5">
+    <div class="row">
+        <div class="col-12">
+            <div class="mb-4">
+                <h1 class="text-center mb-3">Welcome to Mini Blog</h1>
+                <p class="text-center text-muted">
+                    Total Posts: {{ total_posts }} | Published Posts: {{ published_posts }}
+                </p>
             </div>
-        </article>
-    {% empty %}
-        <div class="content-section">
-            <h2>No posts yet!</h2>
-            {% if user.is_authenticated %}
-                <p>Be the first to create a post!</p>
-                <a class="btn btn-primary" href="{% url 'post_create' %}">Create Post</a>
+
+            {% if posts %}
+                {% for post in posts %}
+                    <article class="content-section mb-4">
+                        <div class="article-metadata d-flex align-items-center">
+                            <img class="rounded-circle article-img" src="{{ post.author.profile.image.url }}" style="width: 40px; height: 40px; object-fit: cover;">
+                            <div>
+                                <a class="author-link" href="{% url 'user_posts' post.author.username %}">{{ post.author }}</a>
+                                <br>
+                                <small class="text-muted">
+                                    Posted on {{ post.date_posted|date:"F d, Y" }}
+                                    {% if post.expires_at %}
+                                        <span class="expiry-date">• Expires on {{ post.expires_at|date:"F d, Y" }}</span>
+                                    {% endif %}
+                                </small>
+                            </div>
+                        </div>
+                        <h2><a class="article-title" href="{% url 'post_detail' post.pk %}">{{ post.title }}</a></h2>
+                        {% if post.image %}
+                            <div class="article-image mb-3">
+                                <img src="{{ post.image.url }}" alt="{{ post.title }}" class="img-fluid rounded">
+                            </div>
+                        {% endif %}
+                        <p class="article-content">{{ post.content|truncatewords:50 }}</p>
+                        <div class="d-flex justify-content-between align-items-center">
+                            <a class="btn btn-outline-info" href="{% url 'post_detail' post.pk %}">
+                                <i class="fas fa-book-reader me-2"></i>Read More
+                            </a>
+                            {% if post.author == user %}
+                                <div>
+                                    <a class="btn btn-outline-secondary btn-sm" href="{% url 'post_update' post.pk %}">
+                                        <i class="fas fa-edit me-2"></i>Edit
+                                    </a>
+                                    <a class="btn btn-outline-danger btn-sm" href="{% url 'post_delete' post.pk %}">
+                                        <i class="fas fa-trash me-2"></i>Delete
+                                    </a>
+                                </div>
+                            {% endif %}
+                        </div>
+                    </article>
+                {% endfor %}
             {% else %}
-                <p>Please login to create posts.</p>
-                <a class="btn btn-primary" href="{% url 'login' %}">Login</a>
+                <div class="text-center">
+                    <h3>No Posts Yet</h3>
+                    <p class="text-muted">Be the first to share a post!</p>
+                    {% if user.is_authenticated %}
+                        <a href="{% url 'post_create' %}" class="btn btn-primary">
+                            <i class="fas fa-plus-circle me-2"></i>Create New Post
+                        </a>
+                    {% else %}
+                        <a href="{% url 'login' %}" class="btn btn-primary">
+                            <i class="fas fa-sign-in-alt me-2"></i>Login to Post
+                        </a>
+                    {% endif %}
+                </div>
+            {% endif %}
+
+            {% if is_paginated %}
+                <nav aria-label="Page navigation" class="mt-4">
+                    <ul class="pagination justify-content-center">
+                        {% if page_obj.has_previous %}
+                            <li class="page-item">
+                                <a class="page-link" href="?page=1">First</a>
+                            </li>
+                            <li class="page-item">
+                                <a class="page-link" href="?page={{ page_obj.previous_page_number }}">Previous</a>
+                            </li>
+                        {% endif %}
+
+                        {% for num in page_obj.paginator.page_range %}
+                            {% if page_obj.number == num %}
+                                <li class="page-item active">
+                                    <span class="page-link">{{ num }}</span>
+                                </li>
+                            {% elif num > page_obj.number|add:'-3' and num < page_obj.number|add:'3' %}
+                                <li class="page-item">
+                                    <a class="page-link" href="?page={{ num }}">{{ num }}</a>
+                                </li>
+                            {% endif %}
+                        {% endfor %}
+
+                        {% if page_obj.has_next %}
+                            <li class="page-item">
+                                <a class="page-link" href="?page={{ page_obj.next_page_number }}">Next</a>
+                            </li>
+                            <li class="page-item">
+                                <a class="page-link" href="?page={{ page_obj.paginator.num_pages }}">Last</a>
+                            </li>
+                        {% endif %}
+                    </ul>
+                </nav>
             {% endif %}
         </div>
-    {% endfor %}
+    </div>
+</div>
 
-    {% if is_paginated %}
-        {% if page_obj.has_previous %}
-            <a class="btn btn-outline-info mb-4" href="?page=1">First</a>
-            <a class="btn btn-outline-info mb-4" href="?page={{ page_obj.previous_page_number }}">Previous</a>
-        {% endif %}
+<style>
+    .content-section {
+        background: white;
+        padding: 2rem;
+        border-radius: 15px;
+        box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        transition: transform 0.3s ease;
+        margin-bottom: 2rem;
+    }
 
-        {% for num in page_obj.paginator.page_range %}
-            {% if page_obj.number == num %}
-                <strong class="btn btn-info mb-4">{{ num }}</strong>
-            {% elif num > page_obj.number|add:'-3' and num < page_obj.number|add:'3' %}
-                <a class="btn btn-outline-info mb-4" href="?page={{ num }}">{{ num }}</a>
-            {% endif %}
-        {% endfor %}
+    .content-section:hover {
+        transform: translateY(-5px);
+    }
 
-        {% if page_obj.has_next %}
-            <a class="btn btn-outline-info mb-4" href="?page={{ page_obj.next_page_number }}">Next</a>
-            <a class="btn btn-outline-info mb-4" href="?page={{ page_obj.paginator.num_pages }}">Last</a>
-        {% endif %}
-    {% endif %}
+    .article-img {
+        margin-right: 15px;
+    }
+
+    .article-metadata {
+        padding-bottom: 1rem;
+        margin-bottom: 1rem;
+        border-bottom: 1px solid #eee;
+    }
+
+    .author-link {
+        color: var(--secondary-color);
+        text-decoration: none;
+        font-weight: 600;
+        transition: color 0.3s ease;
+    }
+
+    .author-link:hover {
+        color: var(--primary-color);
+        text-decoration: none;
+    }
+
+    .article-title {
+        color: var(--primary-color);
+        text-decoration: none;
+        transition: color 0.3s ease;
+        font-size: 1.75rem;
+        font-weight: 600;
+        display: block;
+        margin-bottom: 1rem;
+    }
+
+    .article-title:hover {
+        color: var(--secondary-color);
+        text-decoration: none;
+    }
+
+    .article-content {
+        color: #666;
+        margin: 1rem 0;
+        line-height: 1.6;
+    }
+
+    .article-image img {
+        width: 100%;
+        max-height: 400px;
+        object-fit: cover;
+        border-radius: 8px;
+        box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    }
+
+    .btn {
+        transition: all 0.3s ease;
+    }
+
+    .btn:hover {
+        transform: translateY(-2px);
+    }
+
+    .btn-outline-info {
+        color: var(--secondary-color);
+        border-color: var(--secondary-color);
+    }
+
+    .btn-outline-info:hover {
+        background-color: var(--secondary-color);
+        color: white;
+    }
+
+    .btn-outline-secondary {
+        margin-right: 0.5rem;
+    }
+
+    .pagination {
+        margin-top: 2rem;
+    }
+
+    .pagination .page-link {
+        color: var(--secondary-color);
+        border: none;
+        margin: 0 2px;
+        border-radius: 5px;
+        transition: all 0.3s ease;
+    }
+
+    .pagination .page-item.active .page-link {
+        background-color: var(--secondary-color);
+        color: white;
+    }
+
+    .pagination .page-link:hover {
+        background-color: var(--secondary-color);
+        color: white;
+        transform: translateY(-2px);
+    }
+
+    .expiry-date {
+        color: #dc3545;
+        font-weight: 500;
+    }
+</style>
 {% endblock content %} 

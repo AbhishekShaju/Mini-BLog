@@ -1,0 +1,89 @@
+{% extends "blog/base.html" %}
+{% load crispy_forms_tags %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="content-section">
+                <div class="text-center mb-4">
+                    <img class="rounded-circle mb-3" src="{{ user.profile.image.url }}" style="width: 150px; height: 150px; object-fit: cover;">
+                    <h2 class="mb-3">Update Profile</h2>
+                    <p class="text-muted">Update your profile information</p>
+                </div>
+                <form method="POST" enctype="multipart/form-data" class="needs-validation" novalidate>
+                    {% csrf_token %}
+                    <div class="form-group mb-4">
+                        {{ form|crispy }}
+                    </div>
+                    <div class="d-grid gap-2">
+                        <button class="btn btn-primary btn-lg" type="submit">
+                            <i class="fas fa-save me-2"></i>Update Profile
+                        </button>
+                        <a class="btn btn-outline-secondary btn-lg" href="{% url 'user_posts' user.username %}">
+                            <i class="fas fa-times me-2"></i>Cancel
+                        </a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .content-section {
+        background: white;
+        padding: 2.5rem;
+        border-radius: 15px;
+        box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+        transition: transform 0.3s ease;
+    }
+
+    .content-section:hover {
+        transform: translateY(-5px);
+    }
+
+    .form-control {
+        border-radius: 8px;
+        padding: 0.75rem 1rem;
+        border: 2px solid #eee;
+        transition: all 0.3s ease;
+    }
+
+    .form-control:focus {
+        border-color: var(--secondary-color);
+        box-shadow: 0 0 0 0.2rem rgba(52, 152, 219, 0.25);
+    }
+
+    .btn-primary {
+        background: linear-gradient(135deg, var(--secondary-color), var(--primary-color));
+        border: none;
+        padding: 0.75rem 1.5rem;
+        border-radius: 8px;
+        font-weight: 600;
+        letter-spacing: 0.5px;
+        transition: all 0.3s ease;
+    }
+
+    .btn-primary:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 5px 15px rgba(52, 152, 219, 0.3);
+    }
+
+    .btn-outline-secondary {
+        color: #666;
+        border-color: #666;
+        transition: all 0.3s ease;
+    }
+
+    .btn-outline-secondary:hover {
+        background-color: #666;
+        color: white;
+        transform: translateY(-2px);
+    }
+
+    .rounded-circle {
+        border: 3px solid var(--secondary-color);
+    }
+</style>
+{% endblock content %} 

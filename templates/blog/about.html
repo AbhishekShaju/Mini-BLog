@@ -1,23 +1,208 @@
 {% extends "blog/base.html" %}
+
 {% block content %}
-    <div class="content-section">
-        <h1>About Mini Blog</h1>
-        <p>Welcome to Mini Blog, a simple and elegant blogging platform built with Django.</p>
-        <h2>Features</h2>
-        <ul>
-            <li>Create, read, update, and delete blog posts</li>
-            <li>Schedule posts for future publication</li>
-            <li>Set expiration dates for posts</li>
-            <li>User authentication and authorization</li>
-            <li>Responsive design with Bootstrap</li>
-            <li>Admin panel for content management</li>
-        </ul>
-        <h2>How to Use</h2>
-        <ol>
-            <li>Register or login to your account</li>
-            <li>Create new posts using the "New Post" button</li>
-            <li>Set publication and expiration dates for your posts</li>
-            <li>View and manage your posts from your profile</li>
-        </ol>
+<div class="container py-5">
+    <div class="row">
+        <div class="col-md-8">
+            <div class="content-section">
+                <div class="text-center mb-5">
+                    <i class="fas fa-info-circle fa-3x text-primary mb-3"></i>
+                    <h1 class="mb-3">About Mini Blog</h1>
+                    <p class="lead text-muted">A platform for sharing your thoughts with the world</p>
+                </div>
+
+                <div class="row mb-5">
+                    <div class="col-md-6">
+                        <div class="card h-100">
+                            <div class="card-body text-center">
+                                <i class="fas fa-pen-fancy fa-2x text-primary mb-3"></i>
+                                <h3 class="card-title">Create Posts</h3>
+                                <p class="card-text">Share your thoughts, ideas, and experiences with our community through engaging blog posts.</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="card h-100">
+                            <div class="card-body text-center">
+                                <i class="fas fa-users fa-2x text-primary mb-3"></i>
+                                <h3 class="card-title">Connect</h3>
+                                <p class="card-text">Connect with other writers and readers, and build your own community.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row mb-5">
+                    <div class="col-md-6">
+                        <div class="card h-100">
+                            <div class="card-body text-center">
+                                <i class="fas fa-edit fa-2x text-primary mb-3"></i>
+                                <h3 class="card-title">Edit & Manage</h3>
+                                <p class="card-text">Easily edit and manage your posts, and keep track of your content.</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="card h-100">
+                            <div class="card-body text-center">
+                                <i class="fas fa-shield-alt fa-2x text-primary mb-3"></i>
+                                <h3 class="card-title">Secure</h3>
+                                <p class="card-text">Your content is secure and protected with our advanced security measures.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="text-center">
+                    <h2 class="mb-4">Get Started Today</h2>
+                    <p class="mb-4">Join our community and start sharing your stories with the world.</p>
+                    {% if user.is_authenticated %}
+                        <a href="{% url 'post_create' %}" class="btn btn-primary btn-lg">
+                            <i class="fas fa-plus-circle me-2"></i>Create Your First Post
+                        </a>
+                    {% else %}
+                        <a href="{% url 'register' %}" class="btn btn-primary btn-lg">
+                            <i class="fas fa-user-plus me-2"></i>Sign Up Now
+                        </a>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="sidebar">
+                <h3>Quick Links</h3>
+                <ul class="list-group">
+                    <li class="list-group-item">
+                        <i class="fas fa-home me-2"></i>Home
+                    </li>
+                    <li class="list-group-item">
+                        <i class="fas fa-user-plus me-2"></i>Register
+                    </li>
+                    <li class="list-group-item">
+                        <i class="fas fa-sign-in-alt me-2"></i>Login
+                    </li>
+                    <li class="list-group-item">
+                        <i class="fas fa-newspaper me-2"></i>Latest Posts
+                    </li>
+                </ul>
+
+                <h3 class="mt-4">Contact Us</h3>
+                <div class="card">
+                    <div class="card-body">
+                        <p class="card-text">
+                            <i class="fas fa-envelope me-2"></i>Email: support@miniblog.com<br>
+                            <i class="fas fa-phone me-2"></i>Phone: (555) 123-4567
+                        </p>
+                        <div class="social-links">
+                            <a href="#" class="text-primary me-3"><i class="fab fa-facebook fa-lg"></i></a>
+                            <a href="#" class="text-primary me-3"><i class="fab fa-twitter fa-lg"></i></a>
+                            <a href="#" class="text-primary me-3"><i class="fab fa-instagram fa-lg"></i></a>
+                            <a href="#" class="text-primary"><i class="fab fa-linkedin fa-lg"></i></a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
+</div>
+
+<style>
+    .content-section {
+        background: white;
+        padding: 2.5rem;
+        border-radius: 15px;
+        box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+        transition: transform 0.3s ease;
+    }
+
+    .content-section:hover {
+        transform: translateY(-5px);
+    }
+
+    .card {
+        border: none;
+        border-radius: 10px;
+        box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+        transition: all 0.3s ease;
+    }
+
+    .card:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+    }
+
+    .card-title {
+        color: var(--primary-color);
+        font-weight: 600;
+        margin-bottom: 1rem;
+    }
+
+    .card-text {
+        color: #666;
+    }
+
+    .btn-primary {
+        background: linear-gradient(135deg, var(--secondary-color), var(--primary-color));
+        border: none;
+        padding: 0.75rem 1.5rem;
+        border-radius: 8px;
+        font-weight: 600;
+        letter-spacing: 0.5px;
+        transition: all 0.3s ease;
+    }
+
+    .btn-primary:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 5px 15px rgba(52, 152, 219, 0.3);
+    }
+
+    .sidebar {
+        background: white;
+        padding: 2rem;
+        border-radius: 10px;
+        box-shadow: 0 2px 15px rgba(0,0,0,0.05);
+    }
+
+    .sidebar h3 {
+        color: var(--primary-color);
+        margin-bottom: 1.5rem;
+        padding-bottom: 0.5rem;
+        border-bottom: 2px solid var(--secondary-color);
+    }
+
+    .list-group-item {
+        border: none;
+        padding: 1rem;
+        margin-bottom: 0.5rem;
+        border-radius: 5px;
+        transition: all 0.3s ease;
+    }
+
+    .list-group-item:hover {
+        background-color: var(--light-bg);
+        transform: translateX(5px);
+    }
+
+    .social-links a {
+        transition: all 0.3s ease;
+    }
+
+    .social-links a:hover {
+        transform: translateY(-3px);
+        color: var(--secondary-color) !important;
+    }
+
+    .text-primary {
+        color: var(--secondary-color) !important;
+    }
+
+    .fa-info-circle {
+        color: var(--secondary-color);
+    }
+
+    .lead {
+        font-size: 1.25rem;
+        color: #666;
+    }
+</style>
 {% endblock content %} 
